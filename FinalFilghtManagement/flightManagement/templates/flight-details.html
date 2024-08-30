@@ -1,0 +1,204 @@
+{% extends 'layout/base.html' %}
+{% block title %}Thông tin chi tiết chuyến bay{% endblock %}
+{% block content %}
+<style>
+    .section__container {
+        margin-bottom: 20px;
+    }
+    .section__header {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .flight-details__container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .flight-details__info, .flight-details__plane, .flight-details__route {
+        flex-basis: 30%;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .flight-details__info h2, .flight-details__plane h2, .flight-details__route h2 {
+        color: #333;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    .flight-details__info ul, .flight-details__plane ul, .flight-details__route ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .flight-details__info ul li, .flight-details__plane ul li, .flight-details__route ul li {
+        margin-bottom: 10px;
+    }
+    .flight-details__info ul li strong, .flight-details__plane ul li strong, .flight-details__route ul li strong {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+    }
+    .close:hover, .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .form__group {
+        margin-bottom: 15px;
+    }
+    .form__group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .form__group input, .form__group select {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<section class="section__container header__container">
+    <h1 class="section__header">CHI TIẾT CHUYẾN BAY</h1>
+</section>
+
+<section class="section__container flight-details__container">
+    <div class="flight-details__info">
+        <h2>Thông tin chuyến bay</h2>
+        <ul>
+            <li><strong>Tên chuyến bay:</strong> {{ flight.flight_name }}</li>
+            <li><strong>Thời gian khởi hành:</strong> {{ flight_details.time }}</li>
+            <li><strong>Thời lượng chuyến bay:</strong> {{ flight_details.flight_duration }}</li>
+            <!-- Thêm các thông tin khác của chuyến bay tại đây -->
+        </ul>
+    </div>
+    <div class="flight-details__plane">
+        <h2>Thông tin máy bay</h2>
+        <ul>
+            <li><strong>Tên máy bay:</strong> {{ plane.name if plane else 'Không có thông tin' }}</li>
+            <li><strong>Số lượng ghế hạng 1 còn trống:</strong> {{ flight_details.num_of_empty_seats_1st_class }}</li>
+            <li><strong>Số lượng ghế hạng 2 còn trống:</strong> {{ flight_details.num_of_empty_seats_2st_class }}</li>
+            <!-- Thêm các thông tin khác của máy bay tại đây -->
+        </ul>
+    </div>
+    <div class="flight-details__route">
+        <h2>Thông tin tuyến đường</h2>
+        <ul>
+            <li><strong>Tuyến đường:</strong> {{ route.name if route else 'Không có thông tin' }}</li>
+            <!-- Thêm các thông tin khác của tuyến đường tại đây -->
+        </ul>
+    </div>
+</section>
+
+<section>
+    <button type="button" class="btn" id="book-btn" style="justify-content: center">Bán vé</button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form action="{{ url_for('book_ticket', flight_id=flight.id) }}" method="post">
+                <div class="form__group">
+                    <label>Tên chuyến bay:</label>
+                    <a id="flight_name">{{flight.flight_name}}</a>
+                </div>
+                <div class="form__group">
+                    <label>Tên hành khách:</label>
+                    <input id="client_name" name="client_name" type="text" required>
+                </div>
+                <div class="form__group">
+                    <label>CCCD/CMND:</label>
+                    <input id="cccd" name="cccd" type="text" required>
+                </div>
+                <div class="form__group">
+                    <label>Số điện thoại:</label>
+                    <input id="phone" name="phone" type="text" required>
+                </div>
+                <div class="form__group">
+                    <label>Hạng ghế:</label>
+                    <select id="fare_class" name="fare_class" required>
+                        {% for fare_class in fare_classes %}
+                            <option value="{{ fare_class.id }}">{{ fare_class.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Thêm input hidden để truyền flight_id -->
+                <input type="hidden" name="flight_id" value="{{ flight.id }}">
+                <button type="submit" class="btn" id="submit-btn">Bán vé</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("book-btn");
+    var btnsm = document.getElementById("submit-btn");
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    btnsm.onclick = function() {
+        modal.style.display = "block";
+        //nếu mà bán thành công
+        alert("Thành Công");
+        //ngược lại
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+{% endblock %}

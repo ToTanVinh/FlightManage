@@ -1,0 +1,66 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Danh sách các chuyến bay{% endblock %}
+
+
+{% block content %}
+<section class="section__container header__container">
+    <h1 class="section__header">TÌM KIẾM CHUYẾN BAY</h1>
+</section>
+
+<section class="section__container booking__container">
+    <h2 class="section__header">Nhập thông tin yêu cầu của khách hàng</h2>
+    <div class="booking__nav">
+        <span class="option" id="one_way_option">Một Chiều</span>
+        <span class="option selected" id="round_trip_option">Khứ Hồi</span>
+    </div>
+    <form action="/flights" class="booking__form" method="get">
+        <div class="form__group">
+            <label for="from">Đi từ:</label>
+            <input type="text" id="from" name="from" placeholder="Nơi xuất phát">
+        </div>
+        <div class="form__group">
+            <label for="to">Đi đến:</label>
+            <input type="text" id="to" name="to" placeholder="Đích đến">
+        </div>
+        <div class="form__group">
+            <label for="departure_date">Ngày khởi hành:</label>
+            <input type="date" id="departure_date" name="departure_date">
+        </div>
+        <div class="form__group" id="return_date_group">
+            <label for="return_date">Ngày trở về:</label>
+            <input type="date" id="return_date" name="return_date">
+        </div>
+        <button type="submit" class="btn" id="search-btn">Tìm kiếm</button>
+
+    </form>
+</section>
+<script src="{{ url_for('static', filename='js/search-flights.js') }}"></script>
+<script>
+     const oneWayOption = document.getElementById('one_way_option');
+    const roundTripOption = document.getElementById('round_trip_option');
+    const returnDateGroup = document.getElementById('return_date_group');
+
+    oneWayOption.addEventListener('click', () => {
+        returnDateGroup.style.display = 'none';
+    });
+
+    roundTripOption.addEventListener('click', () => {
+        returnDateGroup.style.display = 'block';
+    });
+
+    const options = document.querySelectorAll('.option');
+
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            options.forEach(opt => opt.classList.remove('selected'));
+
+            option.classList.add('selected');
+        });
+    });
+</script>
+
+
+
+
+{% endblock %}

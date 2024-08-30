@@ -1,0 +1,34 @@
+<header class="header">
+    <div class="header--left">
+       <img src="/static/images/logo.png" alt="logo" class="logo"/>
+        My <span> Airline </span>
+    </div>
+    <div class="header-right">
+       {% if current_user.is_authenticated %}
+       <div class="top">
+           <a type="submit" class="btn--log header--log-out btn-top" href="/logout">Thoát </a>
+           <a type="submit" class="btn--log header--log-out btn-top">Chào mừng {{ current_user.first_name}} </a>
+       </div>
+        {% else %}
+        <div class="top">
+           <a type="submit" class="btn--log header--log-out btn-top" href="/"> Trang chủ </a>
+           <a type="submit" class="btn--log header--log-out btn-top" href="/register"> Đăng kí </a>
+           <a type="submit" class="btn--log header--log-out btn-top" href="/login"> Đăng nhập </a>
+       </div>
+        {% endif %}
+
+
+    </div>
+    <div class="bottom">
+     	<nav class="services">
+            <ul>
+               <ul class="header--nav" >
+					<li><a href="">Tra cứu chuyến bay</a></li>
+					<li><a href="">Tin tức</a></li>
+					<li><a href="">Dịch vụ khác</a></li>
+					<li><a href="">Liên hệ</a></li>
+				</ul>
+            </ul>
+        </nav>
+    </div>
+</header>

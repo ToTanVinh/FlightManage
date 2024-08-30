@@ -1,0 +1,41 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+
+<style>
+
+</style>
+<section class="section__container header__container">
+    <h1 class="section__header">DANH SÁCH CÁC CHUYẾN BAY</h1>
+
+</section>
+
+{% if flights %}
+<div class="row">
+    {% for flight in flights %}
+    <div class="col-md-3 col-12" style="padding:0.7rem;">
+        <div class="card" style="background-color: #f8f9fa;">
+            <!--            <div class="card-body">-->
+            <a href="/flights/{{ flight.id }}" class="list-group-item list-group-item-action">
+                <img class="card-img-top" src="/static/images/plan-3.jpg" alt="flight">
+                <div class="card-text" style="margin-top: 10px;">
+                    <!-- Thêm một div mới để căn chỉnh vị trí của h4 -->
+                    <!-- <h4 class="card-title">ID Tuyến bay: {{ flight.id }}</h4> -->
+                    <h4 class="card-subtitle mb-2 text-muted">{{ flight.flight_name }}</h4>
+                </div>
+            </a>
+            <!--            </div>-->
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if not flights %}
+<h2 id="no-results">Không tìm thấy chuyến bay phù hợp.</h2>
+{% endif %}
+
+
+{% endblock %}
